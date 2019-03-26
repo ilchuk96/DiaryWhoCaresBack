@@ -6,7 +6,7 @@ import os.path
 import re
 import json
 
-starting_ind = 0
+starting_ind = 3
 pages = ['0-9', 'А', 'Б', 'В', 'Г', 'Д', 'Ж', 'У', 'З', 'И', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф',
          'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Э', 'Ю', 'Я']
 wiki_url = 'http://ru.wikipedia.nom.al'
@@ -27,7 +27,7 @@ for letter in pages[starting_ind:]:
             continue
         movie_link = item.find('a').get('href')
         movie_title = item.find('a').get('title').replace('/', '\\')
-        if os.path.isdir('0-9/' + movie_title):
+        if os.path.isdir(letter + '/' + movie_title):
             print("Уже записано.")
             continue
 
