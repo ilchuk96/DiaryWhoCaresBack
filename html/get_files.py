@@ -6,8 +6,8 @@ import os.path
 import re
 import json
 
-starting_ind = 3
-pages = ['0-9', 'А', 'Б', 'В', 'Г', 'Д', 'Ж', 'У', 'З', 'И', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф',
+starting_ind = 0
+pages = ['0-9', 'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф',
          'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Э', 'Ю', 'Я']
 wiki_url = 'http://ru.wikipedia.nom.al'
 for letter in pages[starting_ind:]:
