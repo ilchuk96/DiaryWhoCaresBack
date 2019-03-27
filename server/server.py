@@ -1,7 +1,7 @@
+import re
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-import cgi
-from urllib.parse import urlparse
+from ms import make_suggestion
 
 
 class Server(BaseHTTPRequestHandler):
@@ -21,19 +21,18 @@ class Server(BaseHTTPRequestHandler):
         content_len = int(self.headers['content-length'])
         post_body = self.rfile.read(content_len)
         data = json.loads(post_body)  # here is json with dairy text
-
-        parsed_path = urlparse(self.path)
         self._set_headers()
-        self.wfile.write(json.dumps({
-            'method': self.command,
-            'path': self.path,
-            'real_path': parsed_path.query,
-            'query': parsed_path.query,
-            'request_version': self.request_version,
-            'protocol_version': self.protocol_version,
-            'body': data
-        }).encode())
-        return
+        film = make_suggestion(data)
+        letter = film[0]
+        if re.match('[0-9]|\?', letter):
+            letter = '0-9'
+        recommendation = {}
+        with open('../html/' + letter + '/' + film + '/' + film + '.json') as film_json:
+            map = json.load(film_json.read())
+            recommendation['title'] = map['title']
+            recommendation['description'] = map['description']
+
+        self.wfile.write(json.dumps(recommendation).encode())
 
 
 def run(server_class=HTTPServer, handler_class=Server, port=8081):
