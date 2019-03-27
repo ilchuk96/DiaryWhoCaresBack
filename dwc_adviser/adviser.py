@@ -1,4 +1,4 @@
-from preprocessor import SimpleAnalyzer
+from dwc_adviser.preprocessor import SimpleAnalyzer
 import random
 import numpy as np
 from abc import ABC, abstractmethod

@@ -6,7 +6,6 @@ import os.path
 import re
 import json
 
-starting_ind = 0
 pages = 'Абу Бар	Ван	Гам	Дар	Евл	Жан	Зай	Иве	Кан	Лал	Мак	Най	Обу	Пас	Рай	Сан	Так	Уде	Фак	Хак	Цар	Чар	Шап	Щед	Эвр	Юди' \
         '	Ягу Ада	Без	Вве	Гек	Дел	Его	Жев	Зан	Идо	Кас	Лас	Мар	Нат	Ожи	Пер	Рац	Сев	Тва	Уим	Фед	Хар	Цви	Чел	Шва	Щеп	' \
         'Эйф Юли Яко Акт Бер	Вес	Геф	Дец	Ежо	Жен	Зах	Ико	Ким	Лег	Мау	Ней	Оку	Пис	Рел	Сет	Тер	Улм	Фид	Хат	Цен	Чер' \
@@ -15,6 +14,7 @@ pages = 'Абу Бар	Ван	Гам	Дар	Евл	Жан	Зай	Иве	Кан	�
         '	Фок	Хок	Циг	Чиж	Шма	Щук	Энг	Юрк	Яно Апп	Боя	Вок	Гра	Дор	Еро	Жуа	Зин	Иос	Кра	Лов	Мож	Нов	Осл	Пре	Рот	Спе	' \
         'Три	Урю	Фоф	Хоп	Цин	Чка	Шта	Щуч	Эпо	Юрь	Яро Арх	Бул	Вос	Гру	Дув	Ест	Жуп	Зом	Исм	Кря	Лук	Мот	Ном	Отк	Пуг' \
         '	Рут	Стр	Тум	Утр	Фро	Хре	Цна	Чум	Шув	Щёг	Эсс	Юсу	Яст'.split()
+starting_ind = pages.index('Гру')
 wiki_url = 'http://ru.wikipedia.nom.al'
 for letter in pages[starting_ind:]:
     print('Текущая буква: ' + letter)
@@ -42,8 +42,12 @@ for letter in pages[starting_ind:]:
         with requests.get(film_url) as film_r:
             film = BeautifulSoup(film_r.text)
 
-        description = film.find('div', {'class': 'mw-parser-output'}).find('p')
-        description = re.sub('<.*?>|[.*?]', '', description.text)
+        description = None
+        try:
+            description = film.find('div', {'class': 'mw-parser-output'}).find('p')
+            description = re.sub('<.*?>|[.*?]', '', description.text)
+        except AttributeError as e:
+            print(e)
 
         cur = film.h2
         found = False
@@ -61,7 +65,10 @@ for letter in pages[starting_ind:]:
         plot = re.sub('<.*?>|[.*?]|Сюжет|В ролях', '', plot)
         os.mkdir(letter + '/' + movie_title)
 
-        ans = {'id': movie_title, 'title': movie_title, 'description': description, 'plot': plot}
+        if description is not None:
+            ans = {'id': movie_title, 'title': movie_title, 'description': description, 'plot': plot}
+        else:
+            ans = {'id': movie_title, 'title': movie_title, 'plot': plot}
         with open(letter + '/' + movie_title + '/' + movie_title + '.json', 'w') as output_file:
             json.dump(ans, output_file, ensure_ascii=False)
 

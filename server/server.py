@@ -22,24 +22,25 @@ class Server(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps({'hello': 'world', 'received': 'ok'}).encode())
 
     def do_POST(self):
+        print(os.path.curdir)
         content_len = int(self.headers['content-length'])
         post_body = self.rfile.read(content_len)
         data = json.loads(post_body)  # here is json with dairy text
         self._set_headers()
         adviser = MainAdviser()
-        film = adviser.make_suggestion(data['text'])
+        film = adviser.make_suggestion(data['text'])[0]
         letter = film[0]
         if re.match('[0-9]|\?', letter):
             letter = '0-9'
         recommendation = {}
-        with open('html/' + letter + '/' + film + '/' + film + '.json') as film_json:
+        with open('../html/' + letter + '/' + film + '/' + film + '.json') as film_json:
             map = json.load(film_json)
             recommendation['title'] = map['title']
             recommendation['description'] = map['description']
 
-        if os.path.isfile('html/' + letter + '/' + film + '/' + film + '.json'):
+        if os.path.isfile('../html/' + letter + '/' + film + '/' + film + '.json'):
             basehight = 300
-            with Image.open('html/' + letter + '/' + film + '/' + film + '.jpg') as img:
+            with Image.open('../html/' + letter + '/' + film + '/' + film + '.jpg') as img:
                 hpercent = (basehight / float(img.size[1]))
                 wsize = int((float(img.size[0]) * float(hpercent)))
                 img = img.resize((wsize, basehight), Image.ANTIALIAS)
@@ -51,7 +52,7 @@ class Server(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(recommendation).encode())
 
 
-def run(server_class=HTTPServer, handler_class=Server, port=8080):
+def run(server_class=HTTPServer, handler_class=Server, port=8081):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
 
