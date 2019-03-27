@@ -9,7 +9,7 @@ class MainAdviser:
         self.movie_data = MovieData()
         self.movie_data.load_csv(self.MOVIE_DATA_CSV)
 
-        self.adviser = RandomAdviser(self.movie_data)
+        self.adviser = TfidfAdviser(self.movie_data)
 
     def make_suggestion(self, diary_entry):
         return self.adviser.make_suggestion(diary_entry)
