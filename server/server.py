@@ -2,6 +2,10 @@ import re
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from ms import make_suggestion
+from PIL import Image
+import os
+import base64
+from io import BytesIO
 
 
 class Server(BaseHTTPRequestHandler):
@@ -28,9 +32,20 @@ class Server(BaseHTTPRequestHandler):
             letter = '0-9'
         recommendation = {}
         with open('../html/' + letter + '/' + film + '/' + film + '.json') as film_json:
-            map = json.load(film_json.read())
+            map = json.load(film_json)
             recommendation['title'] = map['title']
             recommendation['description'] = map['description']
+
+        if os.path.isfile('../html/' + letter + '/' + film + '/' + film + '.json'):
+            basehight = 300
+            with Image.open('../html/' + letter + '/' + film + '/' + film + '.jpg') as img:
+                hpercent = (basehight / float(img.size[1]))
+                wsize = int((float(img.size[0]) * float(hpercent)))
+                img = img.resize((wsize, basehight), Image.ANTIALIAS)
+                buffered = BytesIO()
+                img.save(buffered, format="JPEG")
+                img_str = base64.b64encode(buffered.getvalue())
+                recommendation['img'] = img_str.decode("utf-8")
 
         self.wfile.write(json.dumps(recommendation).encode())
 
