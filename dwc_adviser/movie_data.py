@@ -1,3 +1,6 @@
+import csv
+
+
 class MovieData:
     def __init__(self):
         self.titles = None
