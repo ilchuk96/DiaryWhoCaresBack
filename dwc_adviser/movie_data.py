@@ -1,5 +1,4 @@
 import csv
-import os
 
 
 class MovieData:
@@ -18,7 +17,7 @@ class MovieData:
             texts = []
             for row in reader:
                 if good_only:
-                    if not row[header['good_description']]:
+                    if not int(row[header['good_description']]):
                         continue
                 if len(row[header['description']] + row[header['plot']]) > 100:
                     titles.append(row[header['title']])

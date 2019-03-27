@@ -4,7 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 class Preprocessor:
     def __init__(self):
-        self.VOCABULARY_PATH = 'vocab.txt'
+        self.VOCABULARY_PATH = 'dwc_adviser/vocab.txt'
 
         self.tokenizer_uni = TfidfVectorizer(ngram_range=(1, 1), token_pattern=r'\w+').build_analyzer()
         self.tokenizer_bi = TfidfVectorizer(ngram_range=(2, 2), token_pattern=r'\w+').build_analyzer()

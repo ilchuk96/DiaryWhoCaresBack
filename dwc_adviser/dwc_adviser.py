@@ -1,15 +1,25 @@
 from dwc_adviser.movie_data import MovieData
-from dwc_adviser.adviser import TfidfAdviser
+from dwc_adviser.adviser import RandomAdviser, TfidfAdviser
 
 
 class MainAdviser:
     def __init__(self):
-        self.MOVIE_DATA_CSV = 'movie_data.csv'
+        print('Initializing adviser..')
+
+        self.MOVIE_DATA_CSV = 'dwc_adviser/movie_data.csv'
 
         self.movie_data = MovieData()
         self.movie_data.load_csv(self.MOVIE_DATA_CSV)
+        self.movie_data_good_only = MovieData()
+        self.movie_data_good_only.load_csv(self.MOVIE_DATA_CSV, good_only=True)
 
         self.adviser = TfidfAdviser(self.movie_data)
+        self.adviser_good_only = TfidfAdviser(self.movie_data_good_only)
 
-    def make_suggestion(self, diary_entry):
-        return self.adviser.make_suggestion(diary_entry)
+        print('Adviser is ready!')
+
+    def make_suggestion(self, diary_entry, n_sugg=5, good_only=False):
+        if good_only:
+            return self.adviser_good_only.make_suggestion(diary_entry, n_sugg)
+        else:
+            return self.adviser.make_suggestion(diary_entry, n_sugg)
