@@ -1,11 +1,11 @@
 import re
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from ms import make_suggestion
 from PIL import Image
 import os
 import base64
 from io import BytesIO
+from dwc_adviser.dwc_adviser import MainAdviser
 
 
 class Server(BaseHTTPRequestHandler):
@@ -26,19 +26,20 @@ class Server(BaseHTTPRequestHandler):
         post_body = self.rfile.read(content_len)
         data = json.loads(post_body)  # here is json with dairy text
         self._set_headers()
-        film = make_suggestion(data)
+        adviser = MainAdviser()
+        film = adviser.make_suggestion(data['text'])
         letter = film[0]
         if re.match('[0-9]|\?', letter):
             letter = '0-9'
         recommendation = {}
-        with open('../html/' + letter + '/' + film + '/' + film + '.json') as film_json:
+        with open('html/' + letter + '/' + film + '/' + film + '.json') as film_json:
             map = json.load(film_json)
             recommendation['title'] = map['title']
             recommendation['description'] = map['description']
 
-        if os.path.isfile('../html/' + letter + '/' + film + '/' + film + '.json'):
+        if os.path.isfile('html/' + letter + '/' + film + '/' + film + '.json'):
             basehight = 300
-            with Image.open('../html/' + letter + '/' + film + '/' + film + '.jpg') as img:
+            with Image.open('html/' + letter + '/' + film + '/' + film + '.jpg') as img:
                 hpercent = (basehight / float(img.size[1]))
                 wsize = int((float(img.size[0]) * float(hpercent)))
                 img = img.resize((wsize, basehight), Image.ANTIALIAS)
@@ -50,7 +51,7 @@ class Server(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(recommendation).encode())
 
 
-def run(server_class=HTTPServer, handler_class=Server, port=8081):
+def run(server_class=HTTPServer, handler_class=Server, port=8080):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
 

@@ -1,10 +1,10 @@
-from movie_data import MovieData
-from adviser import RandomAdviser
+from dwc_adviser.movie_data import MovieData
+from dwc_adviser.adviser import RandomAdviser
 
 
 class MainAdviser:
     def __init__(self):
-        self.MOVIE_DATA_CSV = 'movie_data.csv'
+        self.MOVIE_DATA_CSV = 'dwc_adviser/movie_data.csv'
 
         self.movie_data = MovieData()
         self.movie_data.load_csv(self.MOVIE_DATA_CSV)
