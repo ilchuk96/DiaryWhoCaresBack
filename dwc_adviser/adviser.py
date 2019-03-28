@@ -1,4 +1,4 @@
-from dwc_adviser.preprocessor import SimpleAnalyzer
+from dwc_adviser.preprocessor import Preprocessor, SimpleAnalyzer, NormalizedAnalyzer
 import random
 import numpy as np
 from abc import ABC, abstractmethod
@@ -26,6 +26,24 @@ class TfidfAdviser(Adviser):
         self.tfidf_matrix = self.tfidf_vectorizer.fit_transform(self.movie_data.texts)
     
     def make_suggestion(self, diary_entry, n_sugg=5):
+        distances = euclidean_distances(self.tfidf_vectorizer.transform([diary_entry]), self.tfidf_matrix)
+        ixs = np.argsort(distances)[0][:n_sugg]
+        return [self.movie_data.titles[i] for i in ixs]
+    
+class TfidfCleanAdviser(Adviser):
+    def __init__(self, movie_data):
+        super().__init__(movie_data)
+        
+        tfidf_vocabulary = []
+        with open('dwc_adviser/tfidf_vocabulary_norm.txt', 'r') as inf:
+            for line in inf:
+                tfidf_vocabulary.append(line.strip())
+        
+        self.tfidf_vectorizer = TfidfVectorizer(min_df=5, max_df=0.9, analyzer=NormalizedAnalyzer().analyzer, vocabulary=tfidf_vocabulary)
+        self.tfidf_matrix = self.tfidf_vectorizer.fit_transform(self.movie_data.texts)
+    
+    def make_suggestion(self, diary_entry, n_sugg=5):
+        diary_entry = Preprocessor().normalize_text(diary_entry)
         distances = euclidean_distances(self.tfidf_vectorizer.transform([diary_entry]), self.tfidf_matrix)
         ixs = np.argsort(distances)[0][:n_sugg]
         return [self.movie_data.titles[i] for i in ixs]

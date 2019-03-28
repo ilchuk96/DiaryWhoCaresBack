@@ -1,5 +1,5 @@
 from dwc_adviser.movie_data import MovieData
-from dwc_adviser.adviser import RandomAdviser, TfidfAdviser
+from dwc_adviser.adviser import RandomAdviser, TfidfAdviser, TfidfCleanAdviser
 
 
 class MainAdviser:
@@ -13,8 +13,8 @@ class MainAdviser:
         self.movie_data_good_only = MovieData()
         self.movie_data_good_only.load_csv(self.MOVIE_DATA_CSV, good_only=True)
 
-        self.adviser = TfidfAdviser(self.movie_data)
-        self.adviser_good_only = TfidfAdviser(self.movie_data_good_only)
+        self.adviser = TfidfCleanAdviser(self.movie_data)
+        self.adviser_good_only = TfidfCleanAdviser(self.movie_data_good_only)
 
         print('Adviser is ready!')
 
