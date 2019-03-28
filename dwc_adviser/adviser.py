@@ -40,10 +40,21 @@ class TfidfCleanAdviser(Adviser):
                 tfidf_vocabulary.append(line.strip())
         
         self.tfidf_vectorizer = TfidfVectorizer(min_df=5, max_df=0.9, analyzer=NormalizedAnalyzer().analyzer, vocabulary=tfidf_vocabulary)
+        print('Building tfidf matrix..')
         self.tfidf_matrix = self.tfidf_vectorizer.fit_transform(self.movie_data.texts)
     
     def make_suggestion(self, diary_entry, n_sugg=5):
         diary_entry = Preprocessor().normalize_text(diary_entry)
-        distances = euclidean_distances(self.tfidf_vectorizer.transform([diary_entry]), self.tfidf_matrix)
+        diary_entry_vector = self.tfidf_vectorizer.transform([diary_entry])
+        unknown = self.check_unknown(diary_entry_vector, n_sugg)
+        if unknown:
+            return unknown
+        distances = euclidean_distances(diary_entry_vector, self.tfidf_matrix)
         ixs = np.argsort(distances)[0][:n_sugg]
         return [self.movie_data.titles[i] for i in ixs]
+
+    def check_unknown(self, diary_entry_vector, n_sugg=5):
+        if np.sum(diary_entry_vector) < 0.1:
+            magic = [random.randrange(1, len(self.movie_data)) for _ in range(n_sugg)]
+            return [self.movie_data.titles[i] for i in magic]
+        return None
