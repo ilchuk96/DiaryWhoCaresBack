@@ -29,7 +29,7 @@ class Server(BaseHTTPRequestHandler):
         post_body = self.rfile.read(content_len)
         data = json.loads(post_body)  # here is json with dairy text
         self._set_headers()
-        films = self.adviser.make_suggestion(data['text'])[:3]
+        films = self.adviser.make_suggestion(data['text'])
         recommendations = []
         for film in films:
             recommendation = {}
