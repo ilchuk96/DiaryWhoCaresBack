@@ -42,17 +42,11 @@ class Server(BaseHTTPRequestHandler):
                 recommendation['description'] = map['description']
 
             if os.path.isfile('html/' + letter + '/' + film + '/' + film + '.jpg'):
-                basehight = 300
                 basewight = 200
                 with Image.open('html/' + letter + '/' + film + '/' + film + '.jpg') as img:
-                    hpercent = (basehight / float(img.size[1]))
                     wpercent = (basewight / float(img.size[0]))
-                    if hpercent > wpercent:
-                        wsize = int((float(img.size[0]) * float(hpercent)))
-                        img = img.resize((wsize, basehight), Image.ANTIALIAS)
-                    else:
-                        hsize = int((float(img.size[1]) * float(wpercent)))
-                        img = img.resize((basewight, hsize), Image.ANTIALIAS)
+                    hsize = int((float(img.size[1]) * float(wpercent)))
+                    img = img.resize((basewight, hsize), Image.ANTIALIAS)
                     buffered = BytesIO()
                     img.save(buffered, format="JPEG")
                     img_str = base64.b64encode(buffered.getvalue())
