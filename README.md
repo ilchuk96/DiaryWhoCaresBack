@@ -8,6 +8,8 @@
 pip3 install -r requirements.txt
 ```
 
+В корневую папку распаковать архив html.zip [отсюда](https://drive.google.com/open?id=1qQKJeGDKBH2vl4MvGm7_XlK_MJsS7QBZ).
+
 После этого из той же папки запустить
 
 ```
