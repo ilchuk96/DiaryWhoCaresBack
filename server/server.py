@@ -32,18 +32,14 @@ class Server(BaseHTTPRequestHandler):
         films = self.adviser.make_suggestion(data['text'])[:3]
         recommendations = []
         for film in films:
-            letter = film[0]
-            if re.match('[0-9]|\?', letter):
-                letter = '0-9'
             recommendation = {}
-            with open('html/' + letter + '/' + film + '/' + film + '.json') as film_json:
+            with open('html/' + film + '.json') as film_json:
                 map = json.load(film_json)
                 recommendation['title'] = map['title']
                 recommendation['description'] = map['description']
-
-            if os.path.isfile('html/' + letter + '/' + film + '/' + film + '.jpg'):
+            if os.path.isfile('html/' + film + '.jpg'):
                 basewight = 200
-                with Image.open('html/' + letter + '/' + film + '/' + film + '.jpg') as img:
+                with Image.open('html/' + film + '.jpg') as img:
                     wpercent = (basewight / float(img.size[0]))
                     hsize = int((float(img.size[1]) * float(wpercent)))
                     img = img.resize((basewight, hsize), Image.ANTIALIAS)
