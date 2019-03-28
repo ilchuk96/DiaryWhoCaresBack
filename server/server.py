@@ -29,28 +29,37 @@ class Server(BaseHTTPRequestHandler):
         post_body = self.rfile.read(content_len)
         data = json.loads(post_body)  # here is json with dairy text
         self._set_headers()
-        film = self.adviser.make_suggestion(data['text'])[0]
-        letter = film[0]
-        if re.match('[0-9]|\?', letter):
-            letter = '0-9'
-        recommendation = {}
-        with open('html/' + letter + '/' + film + '/' + film + '.json') as film_json:
-            map = json.load(film_json)
-            recommendation['title'] = map['title']
-            recommendation['description'] = map['description']
+        films = self.adviser.make_suggestion(data['text'])[:3]
+        recommendations = []
+        for film in films:
+            letter = film[0]
+            if re.match('[0-9]|\?', letter):
+                letter = '0-9'
+            recommendation = {}
+            with open('html/' + letter + '/' + film + '/' + film + '.json') as film_json:
+                map = json.load(film_json)
+                recommendation['title'] = map['title']
+                recommendation['description'] = map['description']
 
-        if os.path.isfile('html/' + letter + '/' + film + '/' + film + '.jpg'):
-            basehight = 300
-            with Image.open('html/' + letter + '/' + film + '/' + film + '.jpg') as img:
-                hpercent = (basehight / float(img.size[1]))
-                wsize = int((float(img.size[0]) * float(hpercent)))
-                img = img.resize((wsize, basehight), Image.ANTIALIAS)
-                buffered = BytesIO()
-                img.save(buffered, format="JPEG")
-                img_str = base64.b64encode(buffered.getvalue())
-                recommendation['img'] = img_str.decode("utf-8")
+            if os.path.isfile('html/' + letter + '/' + film + '/' + film + '.jpg'):
+                basehight = 300
+                basewight = 200
+                with Image.open('html/' + letter + '/' + film + '/' + film + '.jpg') as img:
+                    hpercent = (basehight / float(img.size[1]))
+                    wpercent = (basewight / float(img.size[0]))
+                    if hpercent > wpercent:
+                        wsize = int((float(img.size[0]) * float(hpercent)))
+                        img = img.resize((wsize, basehight), Image.ANTIALIAS)
+                    else:
+                        hsize = int((float(img.size[1]) * float(wpercent)))
+                        img = img.resize((basewight, hsize), Image.ANTIALIAS)
+                    buffered = BytesIO()
+                    img.save(buffered, format="JPEG")
+                    img_str = base64.b64encode(buffered.getvalue())
+                    recommendation['img'] = img_str.decode("utf-8")
+            recommendations.append(recommendation)
 
-        self.wfile.write(json.dumps(recommendation).encode())
+        self.wfile.write(json.dumps(recommendations).encode())
 
 
 def run(server_class=HTTPServer, handler_class=Server, port=8090):
