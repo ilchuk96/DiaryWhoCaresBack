@@ -5,6 +5,7 @@ from tqdm import tqdm
 
 
 def read_vocabulary(vocabulary_path):
+    print('Reading russian vocabulary..')
     ex_words = set()
     with open(vocabulary_path, 'r') as inf:
         for line in inf:
@@ -91,6 +92,7 @@ class Preprocessor:
                 for line in inf:
                     words.append(line.strip())
             self.normal_forms = {}
+            print('Caching normal forms..')
             for w in tqdm(words):
                 if w not in self.normal_forms:
                     self.normal_forms[w] = self.morpher.parse(w)[0].normal_form
