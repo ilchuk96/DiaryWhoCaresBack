@@ -21,6 +21,8 @@ def build_csv_from_movie_data():
         for movie_name in tqdm(movie_names):
             with open(f'{MOVIE_JSON_PATH}/{movie_name}') as movie_json:
                 movie_data_dict = json.load(movie_json)
+                if len(movie_data_dict) < 4:
+                    continue
                 movie_data_list = [current_id, 
                                    movie_data_dict['title'].strip(),
                                    movie_data_dict['description'].strip(),
