@@ -8,6 +8,7 @@ class MainAdviser:
 
         self.MOVIE_DATA_CSV = 'dwc_adviser/movie_data.csv'
 
+        print('Loading movie data..')
         self.movie_data = MovieData()
         self.movie_data.load_csv(self.MOVIE_DATA_CSV)
         self.movie_data_good_only = MovieData()
