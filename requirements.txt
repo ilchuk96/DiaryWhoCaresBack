@@ -1,2 +1,7 @@
-Pillow
-sklearn
+requests==2.19.1
+numpy==1.15.2
+tqdm==4.30.0
+pymorphy2==0.8
+Pillow==5.4.1
+beautifulsoup4==4.7.1
+scikit_learn==0.20.3

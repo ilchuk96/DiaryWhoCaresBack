@@ -19,9 +19,10 @@ class MovieData:
                 if good_only:
                     if not int(row[header['good_description']]):
                         continue
-                if len(row[header['description']] + row[header['plot']]) > 100:
+                if len(row[header['plot']]) > 100:
                     titles.append(row[header['title']])
-                    texts.append(row[header['description']] + '\n' + row[header['plot']])
+                    # texts.append(row[header['description']] + '\n' + row[header['plot']])
+                    texts.append(row[header['plot']])
         self.titles = titles
         self.texts = texts
         
